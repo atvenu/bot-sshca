@@ -1,4 +1,4 @@
-module github.com/keybase/bot-sshca
+module github.com/atvenu/bot-sshca
 
 go 1.12
 

@@ -7,12 +7,12 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/botwrapper"
+	"github.com/atvenu/bot-sshca/src/keybaseca/botwrapper"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/log"
+	"github.com/atvenu/bot-sshca/src/keybaseca/log"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/config"
-	"github.com/keybase/bot-sshca/src/shared"
+	"github.com/atvenu/bot-sshca/src/keybaseca/config"
+	"github.com/atvenu/bot-sshca/src/shared"
 
 	"github.com/google/uuid"
 )

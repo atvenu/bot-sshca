@@ -26,7 +26,7 @@ type ParsedCLIArgument struct {
 // ParseArgs parses os.Args for use with kssh. This is handwritten rather than using go's flag library (or
 // any other CLI argument parsing library) since we want to have custom arguments and access any other remaining
 // arguments. See this Github discussion for a longer discussion of why this is implemented this way:
-// https://github.com/keybase/bot-sshca/pull/3#discussion_r302740696
+// https://github.com/atvenu/bot-sshca/pull/3#discussion_r302740696
 //
 // Returns: a list of the remaining unparsed arguments, a list of the parsed arguments, error
 func ParseArgs(args []string, cliArguments []CLIArgument) ([]string, []ParsedCLIArgument, error) {

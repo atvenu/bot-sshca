@@ -12,16 +12,16 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/constants"
+	"github.com/atvenu/bot-sshca/src/keybaseca/constants"
 
 	"github.com/google/uuid"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/bot"
-	"github.com/keybase/bot-sshca/src/keybaseca/config"
-	klog "github.com/keybase/bot-sshca/src/keybaseca/log"
-	"github.com/keybase/bot-sshca/src/keybaseca/sshutils"
-	"github.com/keybase/bot-sshca/src/kssh"
-	"github.com/keybase/bot-sshca/src/shared"
+	"github.com/atvenu/bot-sshca/src/keybaseca/bot"
+	"github.com/atvenu/bot-sshca/src/keybaseca/config"
+	klog "github.com/atvenu/bot-sshca/src/keybaseca/log"
+	"github.com/atvenu/bot-sshca/src/keybaseca/sshutils"
+	"github.com/atvenu/bot-sshca/src/kssh"
+	"github.com/atvenu/bot-sshca/src/shared"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"

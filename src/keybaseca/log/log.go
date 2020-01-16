@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/constants"
+	"github.com/atvenu/bot-sshca/src/keybaseca/constants"
 
-	"github.com/keybase/bot-sshca/src/keybaseca/config"
+	"github.com/atvenu/bot-sshca/src/keybaseca/config"
 )
 
 // Log attempts to log the given string to a file. If conf.GetStrictLogging() it will panic if it fails

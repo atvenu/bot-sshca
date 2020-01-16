@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/keybase/bot-sshca/src/shared"
+	"github.com/atvenu/bot-sshca/src/shared"
 	"github.com/stretchr/testify/require"
 )
 

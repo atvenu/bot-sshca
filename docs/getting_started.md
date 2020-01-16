@@ -22,7 +22,7 @@ different users
 On a secured server (note that this server only needs docker installed) that you wish to use to run the CA chatbot:
 
 ```bash
-git clone git@github.com:keybase/bot-sshca.git
+git clone git@github.com:atvenu/bot-sshca.git
 cd bot-sshca/docker/
 cp env.sh.example env.sh
 nano env.sh         # Fill in the values including the previously generated paper key
@@ -52,7 +52,7 @@ Now on the server where you wish to run the chatbot, start the chatbot itself:
 make serve    # Runs inside of docker for ease of use
 ```
 
-Now download the kssh binary and start SSHing! See https://github.com/keybase/bot-sshca/releases to download the most 
+Now download the kssh binary and start SSHing! See https://github.com/atvenu/bot-sshca/releases to download the most 
 recent version of kssh for your platform. 
 
 ```bash

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/keybase/bot-sshca/src/shared"
+	"github.com/atvenu/bot-sshca/src/shared"
 )
 
 // A ConfigFile that is provided by the keybaseca server process and lives in kbfs. It is used to share configuration

@@ -5,13 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-
-	"github.com/keybase/bot-sshca/src/keybaseca/constants"
-
-	"github.com/keybase/bot-sshca/src/keybaseca/botwrapper"
-
-	"github.com/keybase/bot-sshca/src/shared"
-
+	"github.com/atvenu/bot-sshca/src/keybaseca/constants"
+	"github.com/atvenu/bot-sshca/src/keybaseca/botwrapper"
+	"github.com/atvenu/bot-sshca/src/shared"
 	log "github.com/sirupsen/logrus"
 )
 

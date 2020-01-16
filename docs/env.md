@@ -101,7 +101,7 @@ Examples:
 
 ```bash
 export ANNOUNCEMENT="SSH CA bot starting up..."
-export ANNOUNCEMENT="Hello! I'm {USERNAME} and I'm an SSH bot! See github.com/keybase/bot-sshca for information on using Keybase for SSH."
+export ANNOUNCEMENT="Hello! I'm {USERNAME} and I'm an SSH bot! See github.com/atvenu/bot-sshca for information on using Keybase for SSH."
 export ANNOUNCEMENT="Hello! I'm {USERNAME} and I'm an SSH bot! I'm currently listening in {TEAMS}."
 export ANNOUNCEMENT="Hello! I'm {USERNAME} and I'm an SSH bot! Being in {CURRENT_TEAM} will grant you SSH access to certain servers. Reach out to @dworken for more information."
 ```

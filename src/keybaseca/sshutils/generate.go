@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/keybase/bot-sshca/src/shared"
+	"github.com/atvenu/bot-sshca/src/shared"
 )
 
 // Generate a new SSH key and store the private key at filename and the public key at filename.pub
