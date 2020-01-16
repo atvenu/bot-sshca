@@ -21,26 +21,33 @@ import (
 func main() {
 	kssh.InitLogging()
 	team, remainingArgs, action, err := handleArgs(os.Args[1:])
+
 	if err != nil {
 		fmt.Printf("Failed to parse arguments: %v\n", err)
 		os.Exit(1)
 	}
+
+	if len(remainingArgs) == 0 {
+		fmt.Printf("Please provide a destination to connect to\n")
+		os.Exit(1)
+	}
+
 	keyPath, err := getSignedKeyLocation(team)
 	if err != nil {
 		fmt.Printf("Failed to retrieve location to store SSH keys: %v\n", err)
 		os.Exit(1)
 	}
-	if isValidCert(keyPath) {
-		log.WithField("keyPath", keyPath).Debug("Reusing unexpired certificate")
-		doAction(action, keyPath, remainingArgs)
-		os.Exit(0)
-	}
-	config, err := getConfig(team)
+	//if isValidCert(keyPath) {
+	//	log.WithField("keyPath", keyPath).Debug("Reusing unexpired certificate")
+	//	doAction(action, keyPath, remainingArgs)
+	//	os.Exit(0)
+	//}
+	config, err := getConfig(team, remainingArgs[0])
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
 	}
-	err = provisionNewKey(config, keyPath)
+	err = provisionNewKey(config, keyPath, remainingArgs[0])
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
@@ -216,37 +223,38 @@ func handleArgs(args []string) (string, []string, Action, error) {
 }
 
 // Get the kssh.ConfigFile. botname is the team specified via --bot if one was specified, otherwise the empty string
-func getConfig(botname string) (kssh.ConfigFile, error) {
+func getConfig(botname string, requestName string) (kssh.ConfigFile, error) {
 	empty := kssh.ConfigFile{}
+	fmt.Println("not using botname ..." + botname)
 
 	// They specified a bot via `kssh --bot cabot ...`
-	if botname != "" {
-		team, err := kssh.GetTeamFromBot(botname)
-		if err != nil {
-			return empty, err
-		}
-		conf, err := kssh.LoadConfig(fmt.Sprintf("/keybase/team/%s/%s", team, shared.ConfigFilename))
-		if err != nil {
-			return empty, fmt.Errorf("Failed to load config file for team=%s: %v", team, err)
-		}
-		return conf, nil
-	}
-
-	// Check if they set a default bot and retrieve the config for that bot/team if so
-	defaultBot, defaultTeam, err := kssh.GetDefaultBotAndTeam()
-	if err != nil {
-		return empty, err
-	}
-	if defaultBot != "" && defaultTeam != "" {
-		conf, err := kssh.LoadConfig(fmt.Sprintf("/keybase/team/%s/%s", defaultTeam, shared.ConfigFilename))
-		if err != nil {
-			return empty, fmt.Errorf("Failed to load config file for default bot=%s, team=%s: %v", defaultBot, defaultTeam, err)
-		}
-		return conf, nil
-	}
+	//if botname != "" {
+	//	team, err := kssh.GetTeamFromBot(botname)
+	//	if err != nil {
+	//		return empty, err
+	//	}
+	//	conf, err := kssh.LoadConfig(fmt.Sprintf("/keybase/team/%s/%s", team, shared.ConfigFilename))
+	//	if err != nil {
+	//		return empty, fmt.Errorf("Failed to load config file for team=%s: %v", team, err)
+	//	}
+	//	return conf, nil
+	//}
+	//
+	//// Check if they set a default bot and retrieve the config for that bot/team if so
+	//defaultBot, defaultTeam, err := kssh.GetDefaultBotAndTeam()
+	//if err != nil {
+	//	return empty, err
+	//}
+	//if defaultBot != "" && defaultTeam != "" {
+	//	conf, err := kssh.LoadConfig(fmt.Sprintf("/keybase/team/%s/%s", defaultTeam, shared.ConfigFilename))
+	//	if err != nil {
+	//		return empty, fmt.Errorf("Failed to load config file for default bot=%s, team=%s: %v", defaultBot, defaultTeam, err)
+	//	}
+	//	return conf, nil
+	//}
 
 	// No specified bot and no default bot, fallback and load all the configs
-	configs, botnames, err := kssh.LoadConfigs()
+	configs, botnames, err := kssh.LoadConfigs(requestName)
 	if err != nil {
 		return empty, fmt.Errorf("Failed to load config file(s): %v", err)
 	}
@@ -289,7 +297,7 @@ func isValidCert(keyPath string) bool {
 }
 
 // Provision a new signed SSH key with the given config
-func provisionNewKey(config kssh.ConfigFile, keyPath string) error {
+func provisionNewKey(config kssh.ConfigFile, keyPath string, destination string) error {
 	log.Debug("Generating a new SSH key...")
 
 	// Make ~/.ssh/ in case it doesn't exist
@@ -316,8 +324,9 @@ func provisionNewKey(config kssh.ConfigFile, keyPath string) error {
 
 	log.Debug("Requesting signature from the CA....")
 	resp, err := kssh.GetSignedKey(config, shared.SignatureRequest{
-		UUID:         randomUUID.String(),
-		SSHPublicKey: string(pubKey),
+		UUID:             randomUUID.String(),
+		SSHPublicKey:     string(pubKey),
+		RequestedAddress: destination,
 	})
 	if err != nil {
 		return fmt.Errorf("Failed to get a signed key from the CA: %v", err)

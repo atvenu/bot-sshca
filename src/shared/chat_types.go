@@ -21,6 +21,7 @@ type SignatureRequest struct {
 	UUID         string `json:"uuid"`
 	Username     string `json:"-"`
 	DeviceName   string `json:"-"`
+	RequestedAddress string `json:"requested_address"`
 }
 
 // The preamble used at the start of signature request messages

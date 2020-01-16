@@ -1,8 +1,4 @@
-# SSH CA Bot
-
-[![License](https://img.shields.io/badge/license-BSD-success.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![CircleCI](https://circleci.com/gh/keybase/bot-sshca.svg?style=shield)](https://circleci.com/gh/keybase/bot-sshca)
-[![Go ReportCard](https://goreportcard.com/badge/github.com/keybase/bot-sshca)](https://goreportcard.com/report/github.com/keybase/bot-sshca)
+# atVenu Fork of SSH CA Bot
 
 See [keybase.io/blog/keybase-ssh-ca](https://keybase.io/blog/keybase-ssh-ca) for a full announcement and description
 of the code in this repository. 

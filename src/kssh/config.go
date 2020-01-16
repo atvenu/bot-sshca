@@ -22,7 +22,7 @@ type ConfigFile struct {
 // LoadConfigs loads client configs from KBFS. Returns a (listOfConfigFiles, listOfBotNames, err)
 // Both lists are deduplicated based on ConfigFile.BotName. Runs the KBFS operations in parallel
 // to speed up loading configs.
-func LoadConfigs() ([]ConfigFile, []string, error) {
+func LoadConfigs(requestName string) ([]ConfigFile, []string, error) {
 	allTeamsFromKBFS, err := GetKBFSOperationsStruct().KBFSList("/keybase/team/")
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to load config file(s): %v", err)
@@ -39,24 +39,24 @@ func LoadConfigs() ([]ConfigFile, []string, error) {
 		go func(team string) {
 			// Blocks until there is room in boundChan
 			boundChan <- 0
-
-			filename := fmt.Sprintf("/keybase/team/%s/%s", team, shared.ConfigFilename)
-			exists, err := GetKBFSOperationsStruct().KBFSFileExists(filename)
-			if err != nil {
-				// Treat an error as it not existing and just skip that team while searching for config files
-				exists = false
-			}
-			if exists {
-				conf, err := LoadConfig(filename)
+			if team == "atvenu.ssh." + requestName {
+				filename := fmt.Sprintf("/keybase/team/%s/%s", team, shared.ConfigFilename)
+				exists, err := GetKBFSOperationsStruct().KBFSFileExists(filename)
 				if err != nil {
-					errors <- err
-				} else {
-					botNameToConfigMutex.Lock()
-					botNameToConfig[conf.BotName] = conf
-					botNameToConfigMutex.Unlock()
+					// Treat an error as it not existing and just skip that team while searching for config files
+					exists = false
+				}
+				if exists {
+					conf, err := LoadConfig(filename)
+					if err != nil {
+						errors <- err
+					} else {
+						botNameToConfigMutex.Lock()
+						botNameToConfig[conf.BotName] = conf
+						botNameToConfigMutex.Unlock()
+					}
 				}
 			}
-
 			semaphore.Done()
 
 			// Make room in boundChan
@@ -244,7 +244,7 @@ func GetDefaultBotAndTeam() (string, string, error) {
 
 // Get the teamname associated with the given botname
 func GetTeamFromBot(botname string) (string, error) {
-	configs, _, err := LoadConfigs()
+	configs, _, err := LoadConfigs("nothing-to-match")
 	if err != nil {
 		return "", err
 	}
