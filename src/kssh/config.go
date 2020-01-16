@@ -3,12 +3,10 @@ package kssh
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/atvenu/bot-sshca/src/shared"
 	"io/ioutil"
 	"os"
 	"strings"
-	"sync"
-
-	"github.com/atvenu/bot-sshca/src/shared"
 )
 
 // A ConfigFile that is provided by the keybaseca server process and lives in kbfs. It is used to share configuration
@@ -23,61 +21,25 @@ type ConfigFile struct {
 // Both lists are deduplicated based on ConfigFile.BotName. Runs the KBFS operations in parallel
 // to speed up loading configs.
 func LoadConfigs(requestName string) ([]ConfigFile, []string, error) {
-	allTeamsFromKBFS, err := GetKBFSOperationsStruct().KBFSList("/keybase/team/")
+	config := ConfigFile{}
+	filename := fmt.Sprintf("/keybase/team/%s/%s", "atvenu.ssh."+requestName, shared.ConfigFilename)
+	exists, err := GetKBFSOperationsStruct().KBFSFileExists(filename)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to load config file(s): %v", err)
+		exists = false
 	}
-
-	// Iterate through the listed files in parallel to speed up kssh for users with lots of teams
-	semaphore := sync.WaitGroup{}
-	semaphore.Add(len(allTeamsFromKBFS))
-	boundChan := make(chan interface{}, shared.BoundedParallelismLimit)
-	errors := make(chan error, len(allTeamsFromKBFS))
-	botNameToConfig := make(map[string]ConfigFile)
-	botNameToConfigMutex := sync.Mutex{}
-	for _, team := range allTeamsFromKBFS {
-		go func(team string) {
-			// Blocks until there is room in boundChan
-			boundChan <- 0
-			if team == "atvenu.ssh." + requestName {
-				filename := fmt.Sprintf("/keybase/team/%s/%s", team, shared.ConfigFilename)
-				exists, err := GetKBFSOperationsStruct().KBFSFileExists(filename)
-				if err != nil {
-					// Treat an error as it not existing and just skip that team while searching for config files
-					exists = false
-				}
-				if exists {
-					conf, err := LoadConfig(filename)
-					if err != nil {
-						errors <- err
-					} else {
-						botNameToConfigMutex.Lock()
-						botNameToConfig[conf.BotName] = conf
-						botNameToConfigMutex.Unlock()
-					}
-				}
-			}
-			semaphore.Done()
-
-			// Make room in boundChan
-			<-boundChan
-		}(team)
+	if exists {
+		conf, err := LoadConfig(filename)
+		if err != nil {
+			fmt.Errorf("Error loading config",err)
+		} else {
+			config = conf
+		}
 	}
-	semaphore.Wait()
-
-	// Read from errors without blocking
-	select {
-	case err := <-errors:
-		return nil, nil, err
-	default:
-		// No error
-	}
-
 	var configs []ConfigFile
 	var botnames []string
-	for _, config := range botNameToConfig {
-		botnames = append(botnames, config.BotName)
+	if (ConfigFile{}) != config {
 		configs = append(configs, config)
+		botnames = append(botnames, config.BotName)
 	}
 
 	return configs, botnames, nil
